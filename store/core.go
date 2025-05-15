@@ -21,14 +21,13 @@ type Context struct {
 
 // AuthUserInfo 授权用户信息
 type AuthUserInfo struct {
-	AuthId    uint   `json:"auth_id" dc:"登录用户id"`
-	UserName  string `json:"user_name,omitempty" dc:"用户名称"`
-	LoginType string `json:"login_type,omitempty" dc:"登录类型"`
-	RoleId    uint   `json:"role_id,omitempty" dc:"所属角色ID"`
-	RoleTitle string `json:"role_title,omitempty" dc:"所属角色描述"`
-	OpenId    string `json:"open_id,omitempty" dc:"微信用户标识"`
-	UnionId   string `json:"union_id,omitempty" dc:"微信联合用户标识"`
-	SystemId  uint   `json:"system_id,omitempty" dc:"独立系统ID，如单灯独立系统"`
+	AuthId    uint     `json:"auth_id" dc:"登录用户id" v:"required"`
+	Account   string   `json:"account,omitempty" dc:"登录账号"`
+	LoginType string   `json:"login_type,omitempty" dc:"登录类型"`
+	Roles     []string `json:"role_id,omitempty" dc:"所属角色"`
+	OpenId    string   `json:"open_id,omitempty" dc:"微信用户标识"`
+	UnionId   string   `json:"union_id,omitempty" dc:"微信联合用户标识"`
+	Extra     g.Map    `json:"extra,omitempty" dc:"附加信息"`
 }
 
 // JWTAuthResult JWT授权结果
