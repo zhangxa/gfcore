@@ -1,0 +1,83 @@
+# 配置文件的键名命名方式统一使用小驼峰。
+# HTTP Server.
+server:
+  address:     ":9966"
+  dumpRouterMap: true
+  routeOverWrite: false
+  pprofEnabled: false
+  serverRoot: "./resource/public"
+  sessionIdName: "MySessionId"
+  sessionPath: "./runtime/session"
+  sessionMaxAge: "48h"
+  maxHeaderBytes: "20KB"
+  clientMaxBodySize: "200MB"
+  # 日志基本配置
+  # 此配置类似nginx，主要对请求日志的记录
+  logPath:             ""                 # 日志文件存储目录路径，建议使用绝对路径。默认为空，表示关闭
+  logStdout:           true               # 日志是否输出到终端。默认为true
+  errorStack:          true               # 当Server捕获到异常时是否记录堆栈信息到日志中。默认为true
+  errorLogEnabled:     true               # 是否记录异常日志信息到日志中。默认为true
+  errorLogPattern:     "error-{Ymd}.log"  # 异常错误日志文件格式。默认为"error-{Ymd}.log"
+  accessLogEnabled:    false              # 是否记录访问日志。默认为false
+  accessLogPattern:    "access-{Ymd}.log" # 访问日志文件格式。默认为"access-{Ymd}.log"
+
+
+# 日志扩展配置(参数日志组件配置)
+logger:
+  path: "./runtime/log"   # 日志文件路径。默认为空，表示关闭，仅输出到终端
+  level: "all"
+  stdout: true
+  ctxKeys: [ "RequestId" ]
+
+# 数据库相关
+database:
+  logger:
+    path: "./runtime/sql"
+    level: "all"
+    stdout: true
+  default:
+    link:  "mysql:root:123456@tcp(127.0.0.1:3306)/test_db?loc=Local&parseTime=true"
+    debug:  true
+    prefix: "" #表名前缀
+    #role:  "(可选)数据库主从角色(master/slave)，不使用应用层的主从机制请均设置为master"
+
+# 基础扩展配置
+core:
+  deployDomain: "https://www.test.cn" # 部署域名路径
+  deployPath: "" # 部署路径
+
+#modules 模块配置
+modules:
+  api:
+    status: true # 是否启用，默认false
+    routePath: "api" # 问链接前缀路径
+    limitType: 1         #访问受限类型：0 不限制，1 黑名单受限，2只允许白名单
+    isDebug: true # 是否开启调试模式
+
+#jwt配置
+jwt:
+  api:
+    Realm:          "api" #用户的领域名称，默认server api
+    SecretKey:      "apiAr6gdaBguM3feed9backApiServer" #jwt第三部分签名所需的密钥
+    TimeoutHour:    48 #token过期时间，单位小时,整数
+    MaxRefreshHour: 96 #token过期后，可凭借旧token获取新token的刷新时间，单位小时,整数
+    IdentityKey:    "auth_id" # 用户信息主Key
+    TokenLookup:    "header: Authorization, query: token, cookie: jwt"
+    TokenHeadName:  "Bearer"
+
+# OpenAPI 接口文档相关
+swagger:
+  visitPath: "/swagger"      # 访问路径，如果为空，则不启用，如："/swagger"
+  basicAuthUser: "swagger"        #登录账号，留空无需登录
+  basicAuthPass: "123456"        #登录密码，账号不为空有效
+  excludePaths: ["/system"]
+  securityHeader: "Authorization"
+  info:
+    title: "xxx系统-公共接口"
+    description: "适用于xxx系统"
+    version: "1.0.0"      # 接口版本号
+    termsOfService: "" # 服务条款
+    contact:
+      name: ""
+      url: ""
+      email: ""
