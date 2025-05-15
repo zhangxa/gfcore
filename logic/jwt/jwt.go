@@ -33,7 +33,7 @@ type jwtConfig struct {
 }
 
 type userClaims struct {
-	*store.AuthUserInfo
+	*store.JWTAuthInfo
 	jwt.RegisteredClaims
 }
 
@@ -76,7 +76,7 @@ func (s *sJWT) getConfig(module string) *jwtConfig {
 }
 
 // GenToken 生产token等信息
-func (s *sJWT) GenToken(module string, authInfo *store.AuthUserInfo) (res *store.JWTAuthResult, err error) {
+func (s *sJWT) GenToken(module string, authInfo *store.JWTAuthInfo) (res *store.JWTAuthResult, err error) {
 	// 生成token
 	conf := s.getConfig(module)
 	now := gtime.Now()
@@ -84,7 +84,7 @@ func (s *sJWT) GenToken(module string, authInfo *store.AuthUserInfo) (res *store
 	res = &store.JWTAuthResult{}
 	res.ExpiresIn = expire.Timestamp()
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims{
-		AuthUserInfo: authInfo,
+		JWTAuthInfo: authInfo,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    module,
 			ExpiresAt: jwt.NewNumericDate(expire.Time),
@@ -98,7 +98,7 @@ func (s *sJWT) GenToken(module string, authInfo *store.AuthUserInfo) (res *store
 	if conf.MaxRefreshHour > 0 {
 		// 刷新token
 		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims{
-			AuthUserInfo: authInfo,
+			JWTAuthInfo: authInfo,
 			RegisteredClaims: jwt.RegisteredClaims{
 				Issuer:    module,
 				ExpiresAt: jwt.NewNumericDate(now.Add(conf.MaxRefreshHour * time.Hour).Time),
@@ -133,7 +133,7 @@ func (s *sJWT) Parse(ctx context.Context, module string) (token *jwt.Token, err 
 	return
 }
 
-func (s *sJWT) ParseWithClaims(ctx context.Context, module string) (authInfo *store.AuthUserInfo, expiresIn int64, err error) {
+func (s *sJWT) ParseWithClaims(ctx context.Context, module string) (authInfo *store.JWTAuthInfo, expiresIn int64, err error) {
 	conf := s.getConfig(module)
 	headerToken := g.RequestFromCtx(ctx).Header.Get(conf.TokenHeadName)
 	if conf.TokenScheme != "" && strings.HasPrefix(headerToken, conf.TokenScheme) {
@@ -144,7 +144,7 @@ func (s *sJWT) ParseWithClaims(ctx context.Context, module string) (authInfo *st
 }
 
 // parseWithClaims 方法描述
-func (s *sJWT) getAuthInfoByToken(headerToken string, conf *jwtConfig) (authInfo *store.AuthUserInfo, expiresIn int64, err error) {
+func (s *sJWT) getAuthInfoByToken(headerToken string, conf *jwtConfig) (authInfo *store.JWTAuthInfo, expiresIn int64, err error) {
 	var tokenClaims *jwt.Token
 	tokenClaims, err = jwt.ParseWithClaims(headerToken, &userClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return conf.SecretKey, nil
@@ -153,7 +153,7 @@ func (s *sJWT) getAuthInfoByToken(headerToken string, conf *jwtConfig) (authInfo
 		return
 	}
 	if claims, ok := tokenClaims.Claims.(*userClaims); ok && tokenClaims.Valid {
-		authInfo = claims.AuthUserInfo
+		authInfo = claims.JWTAuthInfo
 		expiresIn = claims.ExpiresAt.Time.Unix()
 		return
 	}

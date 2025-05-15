@@ -21,9 +21,9 @@ type (
 		// GetAuthId 获取授权用户ID
 		GetAuthId(ctx context.Context) uint
 		// SetUser 设置上下文用户信息
-		SetUser(ctx context.Context, ctxUser *store.AuthUserInfo)
+		SetUser(ctx context.Context, ctxUser *store.JWTAuthInfo)
 		// GetUser 获取上下文用户信息
-		GetUser(ctx context.Context) *store.AuthUserInfo
+		GetUser(ctx context.Context) *store.JWTAuthInfo
 		// SetModule 设置应用标识
 		SetModule(ctx context.Context, module string)
 		GetModule(ctx context.Context) string

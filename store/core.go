@@ -21,13 +21,12 @@ type Context struct {
 
 // JWTAuthInfo JWT保存的授权用户信息
 type JWTAuthInfo struct {
-	AuthId    uint     `json:"auth_id"              dc:"登录用户id" v:"required"`
-	Account   string   `json:"account,omitempty"    dc:"登录账号"`
-	LoginType string   `json:"login_type,omitempty" dc:"登录类型"`
-	Roles     []string `json:"role_id,omitempty"    dc:"所属角色"`
-	OpenId    string   `json:"open_id,omitempty"    dc:"第三方应用用户标识"`
-	UnionId   string   `json:"union_id,omitempty"   dc:"第三方应用联合用户标识"`
-	Extra     g.Map    `json:"extra,omitempty"      dc:"附加信息"`
+	AuthId    uint   `json:"auth_id"              dc:"登录用户id" v:"required"`
+	Account   string `json:"account,omitempty"    dc:"登录账号"`
+	LoginType string `json:"login_type,omitempty" dc:"登录类型"`
+	OpenId    string `json:"open_id,omitempty"    dc:"第三方应用用户标识"`
+	UnionId   string `json:"union_id,omitempty"   dc:"第三方应用联合用户标识"`
+	Extra     g.Map  `json:"extra,omitempty"      dc:"附加信息"`
 }
 
 // JWTAuthResult JWT授权结果

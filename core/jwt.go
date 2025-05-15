@@ -15,9 +15,9 @@ import (
 type (
 	IJWT interface {
 		// GenToken 生产token等信息
-		GenToken(module string, authInfo *store.AuthUserInfo) (res *store.JWTAuthResult, err error)
+		GenToken(module string, authInfo *store.JWTAuthInfo) (res *store.JWTAuthResult, err error)
 		Parse(ctx context.Context, module string) (token *jwt.Token, err error)
-		ParseWithClaims(ctx context.Context, module string) (authInfo *store.AuthUserInfo, expiresIn int64, err error)
+		ParseWithClaims(ctx context.Context, module string) (authInfo *store.JWTAuthInfo, expiresIn int64, err error)
 		// RefreshToken check if token expire
 		RefreshToken(module string, refreshToken string) (res *store.JWTAuthResult, err error)
 		// Logout 退出登录

@@ -50,12 +50,12 @@ func (s *sContext) GetAuthId(ctx context.Context) uint {
 }
 
 // SetUser 设置上下文用户信息
-func (s *sContext) SetUser(ctx context.Context, ctxUser *store.AuthUserInfo) {
+func (s *sContext) SetUser(ctx context.Context, ctxUser *store.JWTAuthInfo) {
 	s.Get(ctx).AuthUser = ctxUser
 }
 
 // GetUser 获取上下文用户信息
-func (s *sContext) GetUser(ctx context.Context) *store.AuthUserInfo {
+func (s *sContext) GetUser(ctx context.Context) *store.JWTAuthInfo {
 	return s.Get(ctx).AuthUser
 }
 

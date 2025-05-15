@@ -10,6 +10,5 @@ import (
 	_ "github.com/zhangxa/gfcore/logic/middleware"
 	_ "github.com/zhangxa/gfcore/logic/server"
 	_ "github.com/zhangxa/gfcore/logic/system"
-	_ "github.com/zhangxa/gfcore/logic/utils"
 	_ "github.com/zhangxa/gfcore/logic/visits"
 )
