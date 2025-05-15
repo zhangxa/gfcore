@@ -71,7 +71,6 @@ func (s *sJWT) getConfig(module string) *jwtConfig {
 		TokenScheme:    "Bearer",
 	}
 	_ = g.Config().MustGet(context.Background(), pattern).Struct(&conf)
-	g.Dump(module, conf)
 	s.configDict[module] = conf
 	return conf
 }

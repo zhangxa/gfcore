@@ -8,10 +8,3 @@ const (
 	FormNeedOptionItems   = "image,input_image,images,file,input_file,files,media,input_media,medias,number,editor,code"
 	FormSelectOptionItems = "radio,checkbox,select,selects"
 )
-
-// JoinLeft ...联合查询相关
-const (
-	JoinLeft  = "left"
-	JoinRight = "right"
-	JoinInner = "inner"
-)

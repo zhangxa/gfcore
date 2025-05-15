@@ -56,3 +56,13 @@ func (s *sConfig) GetModuleUrlPrefix(module string, addDomain ...bool) string {
 	}
 	return routePath
 }
+
+// GetDefaultPageSize 获取默认分页大小
+func (s *sConfig) GetDefaultPageSize(def ...int) int {
+	ctx := context.Background()
+	defPS := 20
+	if len(def) > 0 && def[0] > 0 {
+		defPS = def[0]
+	}
+	return g.Config().MustGet(ctx, "core.defaultPageSize", defPS).Int()
+}
