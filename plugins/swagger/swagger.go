@@ -12,7 +12,7 @@ import (
 	"github.com/gogf/gf/v2/net/goai"
 	"github.com/gogf/gf/v2/os/gcache"
 	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/zhangxa/gfcore/core"
+	"github.com/zhangxa/gfcore/utils"
 	"net/http"
 	"time"
 )
@@ -108,7 +108,7 @@ func (sw *Swagger) Remove() error {
 // initOpenApi generates api specification using OpenApiV3 protocol.
 func (sw *Swagger) initOpenApi(s *ghttp.Server) (err error) {
 	var methods []string
-	deployPath := core.Utils().GetDeployPath()
+	deployPath := utils.Config.GetDeployPath()
 	for _, item := range s.GetRoutes() {
 		switch item.Type {
 		case ghttp.HandlerTypeMiddleware, ghttp.HandlerTypeHook:

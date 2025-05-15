@@ -97,6 +97,7 @@ func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 		act      = ""
 		url      = ""
 		data     = r.GetHandlerResponse()
+		module   = ""
 	)
 	if localCtx != nil {
 		response = localCtx.HandlerResponse
@@ -105,6 +106,7 @@ func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 		url = localCtx.ResUrl
 		resCode = localCtx.ResCode
 		resData = localCtx.ResData
+		module = localCtx.Module
 	}
 	// There's custom buffer content, it then exits current handler.
 	if response != nil {
@@ -119,12 +121,12 @@ func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 			msg = err.Error()
 			if act != "" {
 				msg = fmt.Sprintf("%s失败", act)
-				if core.Modules().IsDebug() {
+				if core.Modules().IsDebug(module) {
 					msg = fmt.Sprintf("%s:%s", msg, err.Error())
 				}
 			}
 		} else {
-			if core.Modules().IsDebug() {
+			if core.Modules().IsDebug(module) {
 				msg = fmt.Sprintf("%s:%s", msg, err.Error())
 			}
 		}

@@ -8,6 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.9.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/mojocn/base64Captcha v1.3.8
+	github.com/mozillazg/go-pinyin v0.20.0
 	github.com/shopspring/decimal v1.4.0
 )
 
