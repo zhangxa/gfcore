@@ -67,10 +67,6 @@ func (s *sServer) Start(ctx context.Context, name ...interface{}) (err error) {
 		return errors.New("server not init")
 	}
 	svr.Group("/", func(group *ghttp.RouterGroup) {
-		group.Middleware(
-			core.Middleware().Base,
-			core.Middleware().HandlerResponse,
-		)
 		for module, groupFunc := range s.modules {
 			prefix := g.Config().MustGet(ctx, fmt.Sprintf("modules.%s.routePath", module)).String()
 			if prefix == "" {
@@ -81,7 +77,13 @@ func (s *sServer) Start(ctx context.Context, name ...interface{}) (err error) {
 				group.Hook("/*", ghttp.HookBeforeServe, func(r *ghttp.Request) {
 					core.Context().SetModule(r.Context(), module)
 				})
-				group.Middleware(core.Middleware().VisitLimit)
+				group.Middleware(
+					core.Middleware().Base,
+					core.Middleware().CORS,
+					core.Middleware().I18n,
+					core.Middleware().VisitLimit,
+					core.Middleware().HandlerResponse,
+				)
 				groupFunc(group)
 			})
 		}

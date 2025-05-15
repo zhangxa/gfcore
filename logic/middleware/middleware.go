@@ -39,7 +39,7 @@ func NewMiddleware() core.IMiddleware {
 // Base 基础中间件
 func (s *sMiddleware) Base(r *ghttp.Request) {
 	core.Context().Init(r.Context())
-	return
+	r.Middleware.Next()
 }
 
 func (s *sMiddleware) CORS(r *ghttp.Request) {
