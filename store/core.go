@@ -6,21 +6,21 @@ import (
 
 // Context 请求上下文结构
 type Context struct {
-	Module          string        // 应用模块
-	Ip              string        // 请求IP
-	TakeUpTime      int64         // 请求耗时 ms
-	AuthUser        *AuthUserInfo // 上下文用户信息
-	HandlerResponse interface{}   // 组件响应
-	Data            g.Map         // 自定KV变量，业务模块根据需要设置，不固定
-	ResMsg          string        // 自定义接口返回消息
-	ResAct          string        // 自定义操作名称，如：新增，修改，删除等，自动生成返回消息，如新增成功、失败
-	ResCode         any           // 自定义接口返回值
-	ResUrl          string        // 自定义接口跳转链接
-	ResData         any           // 自定义返回内容
+	Module          string       // 应用模块
+	Ip              string       // 请求IP
+	TakeUpTime      int64        // 请求耗时 ms
+	AuthUser        *JWTAuthInfo // 上下文用户信息
+	HandlerResponse interface{}  // 组件响应
+	Data            g.Map        // 自定KV变量，业务模块根据需要设置，不固定
+	ResMsg          string       // 自定义接口返回消息
+	ResAct          string       // 自定义操作名称，如：新增，修改，删除等，自动生成返回消息，如新增成功、失败
+	ResCode         any          // 自定义接口返回值
+	ResUrl          string       // 自定义接口跳转链接
+	ResData         any          // 自定义返回内容
 }
 
-// AuthUserInfo 授权用户信息
-type AuthUserInfo struct {
+// JWTAuthInfo JWT保存的授权用户信息
+type JWTAuthInfo struct {
 	AuthId    uint     `json:"auth_id"              dc:"登录用户id" v:"required"`
 	Account   string   `json:"account,omitempty"    dc:"登录账号"`
 	LoginType string   `json:"login_type,omitempty" dc:"登录类型"`
