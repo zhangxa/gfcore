@@ -64,6 +64,7 @@ func (sw *Swagger) Description() string {
 }
 
 // Install installs the swagger to server as a plugin.
+// It implements the interface ghttp.Plugin.
 func (sw *Swagger) Install(s *ghttp.Server) error {
 	sw.ctx = context.Background()
 	err := g.Cfg().MustGet(sw.ctx, "swagger").Struct(&sw.config)
@@ -74,6 +75,10 @@ func (sw *Swagger) Install(s *ghttp.Server) error {
 		g.Log().Info(sw.ctx, "swagger config visitPath is empty, swagger will not start.")
 		return nil
 	}
+	_ = s.SetConfigWithMap(map[string]interface{}{
+		"swaggerPath": "",
+		"openapiPath": "",
+	})
 	sw.openapi = goai.New()
 	if sw.config.SecurityHeader != "" {
 		sw.openapi.Components = goai.Components{
@@ -95,7 +100,7 @@ func (sw *Swagger) Install(s *ghttp.Server) error {
 	// Initialize openapi.
 	err = sw.initOpenApi(s)
 	if err == nil {
-		g.Log().Infof(sw.ctx, "swagger start success,visit path : %s", sw.config.VisitPath)
+		g.Log().Infof(sw.ctx, "swagger start success,visit link : %s", utils.Strings.UrlAddDomain(sw.config.VisitPath))
 	}
 	return err
 }

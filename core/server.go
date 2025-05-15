@@ -30,11 +30,11 @@ type (
 	}
 	IServer interface {
 		// InitServer 初始化服务
-		InitServer(svr *ghttp.Server)
+		InitServer(name ...interface{}) *ghttp.Server
 		// AddModule 添加模块
 		AddModule(module string, groupFunc func(group *ghttp.RouterGroup))
 		// Start 启动服务
-		Start(ctx context.Context, svr *ghttp.Server) (err error)
+		Start(ctx context.Context, name ...interface{}) (err error)
 	}
 	IValidate interface {
 		RuleUnique(ctx context.Context, in gvalid.RuleFuncInput) error
