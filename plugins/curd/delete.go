@@ -1,19 +1,35 @@
 package curd
 
 import (
-	"context"
+	"errors"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 )
 
-// Delete 删除提交请求
-func Delete[T any](ctx context.Context, where any, gdbModel ...*gdb.Model) (err error) {
-	var db *gdb.Model
-	if len(gdbModel) > 0 {
-		db = gdbModel[0]
-	} else {
-		db = g.DB().Model(new(T)).Ctx(ctx)
+type DeleteModel struct {
+	gdbModel *gdb.Model
+}
+
+func NewDelete(gdbModel *gdb.Model) *DeleteModel {
+	return &DeleteModel{
+		gdbModel: gdbModel,
 	}
-	_, err = db.Where(where).Delete()
+}
+
+// Submit 删除提交请求
+func (s *DeleteModel) Submit(where any) (err error) {
+	_, err = s.gdbModel.Where(where).Delete()
 	return
+}
+
+// SubmitStrict 删除提交请求
+func (s *DeleteModel) SubmitStrict(where any) error {
+	count, err := s.gdbModel.Where(where).Count()
+	if err != nil {
+		return err
+	}
+	if count <= 0 {
+		return errors.New("data not exists")
+	}
+	_, err = s.gdbModel.Where(where).Delete()
+	return err
 }

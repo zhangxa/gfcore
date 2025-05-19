@@ -1,19 +1,20 @@
 package curd
 
 import (
-	"context"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 )
 
-// Update 提交请求
-func Update[T any](ctx context.Context, where any, form any, gdbModel ...*gdb.Model) (err error) {
-	var db *gdb.Model
-	if len(gdbModel) > 0 {
-		db = gdbModel[0]
-	} else {
-		db = g.DB().Model(new(T)).Ctx(ctx)
+type UpdateModel struct {
+	gdbModel *gdb.Model
+}
+
+func NewUpdate(gdbModel *gdb.Model) *UpdateModel {
+	return &UpdateModel{
+		gdbModel: gdbModel,
 	}
-	_, err = db.Where(where).Update(form)
+}
+
+func (m *UpdateModel) Submit(where any, form any) (err error) {
+	_, err = m.gdbModel.Where(where).Update(form)
 	return
 }

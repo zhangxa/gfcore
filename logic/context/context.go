@@ -46,7 +46,11 @@ func (s *sContext) Get(ctx context.Context) *store.Context {
 
 // GetAuthId 获取授权用户ID
 func (s *sContext) GetAuthId(ctx context.Context) uint {
-	return s.Get(ctx).AuthUser.AuthId
+	authUser := s.GetUser(ctx)
+	if authUser != nil {
+		return authUser.AuthId
+	}
+	return 0
 }
 
 // SetUser 设置上下文用户信息
@@ -114,11 +118,6 @@ func (s *sContext) SetAct(ctx context.Context, act string) {
 // SetResCode 将上下文信息设置到上下文请求中，注意是完整覆盖
 func (s *sContext) SetResCode(ctx context.Context, code interface{}) {
 	s.Get(ctx).ResCode = code
-}
-
-// SetResUrl 将上下文信息设置到上下文请求中，注意是完整覆盖
-func (s *sContext) SetResUrl(ctx context.Context, url string) {
-	s.Get(ctx).ResUrl = url
 }
 
 // SetResData 将上下文信息设置到上下文请求中，注意是完整覆盖

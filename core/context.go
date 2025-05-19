@@ -45,8 +45,6 @@ type (
 		SetAct(ctx context.Context, act string)
 		// SetResCode 将上下文信息设置到上下文请求中，注意是完整覆盖
 		SetResCode(ctx context.Context, code interface{})
-		// SetResUrl 将上下文信息设置到上下文请求中，注意是完整覆盖
-		SetResUrl(ctx context.Context, url string)
 		// SetResData 将上下文信息设置到上下文请求中，注意是完整覆盖
 		SetResData(ctx context.Context, data interface{})
 	}

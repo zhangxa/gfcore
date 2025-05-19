@@ -1,14 +1,23 @@
 package curd
 
 import (
-	"context"
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/util/gpage"
 	"github.com/zhangxa/gfcore/utils"
 )
 
+type ReadModel[T any] struct {
+	gdbModel *gdb.Model
+}
+
+func NewRead[T any](gdbModel *gdb.Model) *ReadModel[T] {
+	return &ReadModel[T]{
+		gdbModel: gdbModel,
+	}
+}
+
 // ReqPageData 获取分页列表
-func ReqPageData[T any](ctx context.Context, req *PageDataInput) (data *PageData[T], err error) {
+func (s *ReadModel[T]) ReqPageData(req *PageDataInput) (data *PageData[T], err error) {
 	if req.Limit <= 0 {
 		req.Limit = utils.Config.GetDefaultPageSize(20)
 	}
@@ -24,10 +33,7 @@ func ReqPageData[T any](ctx context.Context, req *PageDataInput) (data *PageData
 			PageSize:    req.Limit,
 		},
 	}
-	if req.Model == nil {
-		req.Model = g.DB().Model(new(T)).Ctx(ctx)
-	}
-	db := req.Model
+	db := s.gdbModel.Clone()
 	if req.Where != nil {
 		db = db.Where(req.Where)
 	}
@@ -47,14 +53,13 @@ func ReqPageData[T any](ctx context.Context, req *PageDataInput) (data *PageData
 	}
 	page := gpage.New(total, req.Limit, req.CurPage, "")
 	data.Pager.TotalPage = page.TotalPage
-	data.Pager.CurrentPage = page.CurrentPage
 	data.Pager.TotalSize = page.TotalSize
 	err = db.Page(req.CurPage, req.Limit).Scan(&data.List)
 	return
 }
 
 // ReqJoinPageData 获取ajax列表分页数据
-func ReqJoinPageData[T any](ctx context.Context, req *JoinPageDataInput) (data *PageData[T], err error) {
+func (s *ReadModel[T]) ReqJoinPageData(req *JoinPageDataInput) (data *PageData[T], err error) {
 	if req.Limit <= 0 {
 		req.Limit = utils.Config.GetDefaultPageSize(20)
 	}
@@ -70,10 +75,7 @@ func ReqJoinPageData[T any](ctx context.Context, req *JoinPageDataInput) (data *
 			PageSize:    req.Limit,
 		},
 	}
-	if req.Model == nil {
-		req.Model = g.DB().Model(new(T)).Ctx(ctx)
-	}
-	db := req.Model.As(req.TableAlia)
+	db := s.gdbModel.Clone().As(req.TableAlia)
 	switch req.JoinType {
 	case JoinLeft:
 		db = db.LeftJoin(req.JoinTable, req.JoinTableAlia, req.JoinOn)
@@ -101,38 +103,32 @@ func ReqJoinPageData[T any](ctx context.Context, req *JoinPageDataInput) (data *
 	}
 	page := gpage.New(total, req.Limit, req.CurPage, "")
 	data.Pager.TotalPage = page.TotalPage
-	data.Pager.CurrentPage = page.CurrentPage
 	data.Pager.TotalSize = page.TotalSize
 	err = db.Page(req.CurPage, req.Limit).Scan(&data.List)
 	return
 }
 
 // ReqListData 获取列表-不分页
-func ReqListData[T any](ctx context.Context, req *ListDataInput) (data []T, err error) {
+func (s *ReadModel[T]) ReqListData(req *ListDataInput) (data []T, err error) {
 	data = make([]T, 0)
-	if req.Model == nil {
-		req.Model = g.DB().Model(new(T)).Ctx(ctx)
-	}
+	db := s.gdbModel.Clone()
 	if req.Fields != "" {
-		req.Model = req.Model.Fields(req.Fields)
+		db = db.Fields(req.Fields)
 	}
 	if req.Where != nil {
-		req.Model = req.Model.Where(req.Where)
+		db = db.Where(req.Where)
 	}
 	if req.Order != "" {
-		req.Model = req.Model.Order(req.Order)
+		db = db.Order(req.Order)
 	}
-	err = req.Model.Scan(&data)
+	err = db.Scan(&data)
 	return
 }
 
 // ReqJoinListData 获取联合表数据列表-不分页
-func ReqJoinListData[T any](ctx context.Context, req *JoinPageDataInput) (data []T, err error) {
+func (s *ReadModel[T]) ReqJoinListData(req *JoinPageDataInput) (data []T, err error) {
 	data = make([]T, 0)
-	if req.Model == nil {
-		req.Model = g.DB().Model(new(T)).Ctx(ctx)
-	}
-	db := req.Model.As(req.TableAlia)
+	db := s.gdbModel.Clone().As(req.TableAlia)
 	switch req.JoinType {
 	case JoinLeft:
 		db = db.LeftJoin(req.JoinTable, req.JoinTableAlia, req.JoinOn)
@@ -155,29 +151,24 @@ func ReqJoinListData[T any](ctx context.Context, req *JoinPageDataInput) (data [
 }
 
 // ReqSingleData 获取单条数据
-func ReqSingleData[T any](ctx context.Context, req *SingleDataInput) (data *T, err error) {
-	if req.Model == nil {
-		req.Model = g.DB().Model(new(T)).Ctx(ctx)
-	}
+func (s *ReadModel[T]) ReqSingleData(req *SingleDataInput) (data *T, err error) {
+	db := s.gdbModel.Clone()
 	if req.Where != nil {
-		req.Model = req.Model.Where(req.Where)
+		db = db.Where(req.Where)
 	}
 	if req.Fields != "" {
-		req.Model = req.Model.Fields(req.Fields)
+		db = db.Fields(req.Fields)
 	}
 	if req.Order != "" {
-		req.Model = req.Model.Order(req.Order)
+		db = db.Order(req.Order)
 	}
-	err = req.Model.Scan(&data)
+	err = db.Scan(&data)
 	return
 }
 
 // ReqJoinSingleData 获取联合表单条数据
-func ReqJoinSingleData[T any](ctx context.Context, req *JoinSingleDataInput) (data *T, err error) {
-	if req.Model == nil {
-		req.Model = g.DB().Model(new(T)).Ctx(ctx)
-	}
-	db := req.Model.As(req.TableAlia)
+func (s *ReadModel[T]) ReqJoinSingleData(req *JoinSingleDataInput) (data *T, err error) {
+	db := s.gdbModel.Clone().As(req.TableAlia)
 	switch req.JoinType {
 	case JoinLeft:
 		db = db.LeftJoin(req.JoinTable, req.JoinTableAlia, req.JoinOn)

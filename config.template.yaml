@@ -58,13 +58,12 @@ modules:
 #jwt配置
 jwt:
   api:
-    Realm:          "api" #用户的领域名称，默认server api
     SecretKey:      "apiAr6gdaBguM3feed9backApiServer" #jwt第三部分签名所需的密钥
-    TimeoutHour:    48 #token过期时间，单位小时,整数
-    MaxRefreshHour: 96 #token过期后，可凭借旧token获取新token的刷新时间，单位小时,整数
-    IdentityKey:    "auth_id" # 用户信息主Key
-    TokenLookup:    "header: Authorization, query: token, cookie: jwt"
-    TokenHeadName:  "Bearer"
+    TimeoutHour:    48 # jwt的过期时间，单位小时
+    MaxRefreshHour: 0  #  jwt的刷新时间，单位小时
+    IdentityKey:    "auth_id" # jwt的用户唯一标识字段名
+    TokenHeadName:  "Authorization" # jwt的请求头字段名
+    TokenScheme:    "Bearer" # jwt的请求头字段值前缀
 
 # OpenAPI 接口文档相关
 swagger:

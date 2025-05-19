@@ -119,24 +119,24 @@ func (s *sFormat) ArrayToTree(list g.List, topID interface{}, idField string, pi
 }
 
 // GetTree 列表转为树形结构
-func (s *sFormat) GetTree(data interface{}, topPk interface{}, pkField, parentField, childField string, resPointer interface{}) {
+func (s *sFormat) GetTree(data interface{}, topId interface{}, idKey, pidKey, childrenKey string, resPointer interface{}) {
 	list := gconv.Maps(data)
 	var top g.Map
 	result := make(g.List, 0)
 	if len(list) > 0 {
 		for _, v := range list {
-			if !g.IsEmpty(topPk) && fmt.Sprintf("%v", v[pkField]) == fmt.Sprintf("%v", topPk) {
+			if !g.IsEmpty(topId) && fmt.Sprintf("%v", v[idKey]) == fmt.Sprintf("%v", topId) {
 				top = v
 			}
-			if fmt.Sprintf("%v", topPk) == fmt.Sprintf("%v", v[parentField]) {
+			if fmt.Sprintf("%v", topId) == fmt.Sprintf("%v", v[pidKey]) {
 				sub := v
-				s.MakeTree(list, sub, pkField, parentField, childField)
+				s.MakeTree(list, sub, idKey, pidKey, childrenKey)
 				result = append(result, sub)
 			}
 		}
 	}
 	if top != nil {
-		top[childField] = result
+		top[childrenKey] = result
 		result = g.List{top}
 	}
 	_ = gconv.Scan(result, resPointer)
@@ -144,20 +144,20 @@ func (s *sFormat) GetTree(data interface{}, topPk interface{}, pkField, parentFi
 }
 
 // MakeTree 获取节点树
-func (s *sFormat) MakeTree(list g.List, node g.Map, pkField, parentField, childField string) { //参数为父节点，添加父节点的子节点指针切片
-	children, hav := s.haveChild(list, node, pkField, parentField) //判断节点是否有子节点并返回
+func (s *sFormat) MakeTree(list g.List, node g.Map, idKey, pidKey, childrenKey string) { //参数为父节点，添加父节点的子节点指针切片
+	children, hav := s.haveChild(list, node, idKey, pidKey) //判断节点是否有子节点并返回
 	if hav {
-		node[childField] = children  //添加子节点
+		node[childrenKey] = children //添加子节点
 		for _, v := range children { //查询子节点的子节点，并添加到子节点
-			s.MakeTree(list, v, pkField, parentField, childField) //递归添加节点
+			s.MakeTree(list, v, idKey, pidKey, childrenKey) //递归添加节点
 		}
 	}
 }
 
 // haveChild 判断是否又子菜单，并返回
-func (s *sFormat) haveChild(list g.List, node g.Map, idField string, pidField string) (child []g.Map, yes bool) {
+func (s *sFormat) haveChild(list g.List, node g.Map, idKey, pidKey string) (child []g.Map, yes bool) {
 	for _, v := range list {
-		if fmt.Sprintf("%v", v[pidField]) == fmt.Sprintf("%v", node[idField]) {
+		if fmt.Sprintf("%v", v[pidKey]) == fmt.Sprintf("%v", node[idKey]) {
 			child = append(child, v)
 		}
 	}

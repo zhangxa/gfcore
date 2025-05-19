@@ -11,7 +11,6 @@ import (
 	"github.com/zhangxa/gfcore/store"
 	"mime"
 	"net/http"
-	"time"
 )
 
 const (
@@ -51,10 +50,9 @@ func (s *sMiddleware) VisitLimit(r *ghttp.Request) {
 	module := core.Context().GetModule(r.Context())
 	if core.IpLimit().IsLimited(r.Context(), module) {
 		r.Response.WriteJson(store.DefaultHandlerResponse{
-			Code:    gcode.CodeBusinessValidationFailed,
-			Msg:     "request forbidden!",
-			Data:    nil,
-			Success: false,
+			Code: gcode.CodeBusinessValidationFailed,
+			Msg:  "request forbidden!",
+			Data: nil,
 		})
 		r.ExitAll()
 	} else {
@@ -95,7 +93,6 @@ func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 		resData  interface{}
 		msg      = ""
 		act      = ""
-		url      = ""
 		data     = r.GetHandlerResponse()
 		module   = ""
 	)
@@ -103,7 +100,6 @@ func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 		response = localCtx.HandlerResponse
 		msg = localCtx.ResMsg
 		act = localCtx.ResAct
-		url = localCtx.ResUrl
 		resCode = localCtx.ResCode
 		resData = localCtx.ResData
 		module = localCtx.Module
@@ -155,12 +151,9 @@ func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 		}
 	}
 	res := &store.DefaultHandlerResponse{
-		Code:      code.Code(),
-		Msg:       msg,
-		Data:      data,
-		Url:       url,
-		Success:   code.Code() == 0,
-		Timestamp: time.Now().Unix(),
+		Code: code.Code(),
+		Msg:  msg,
+		Data: data,
 	}
 	if resCode != nil {
 		res.Code = resCode
